@@ -1,11 +1,10 @@
 package com.gym.gymmanager.controller;
 
-import com.gym.gymmanager.model.Batch;
-import com.gym.gymmanager.model.Member;
-import com.gym.gymmanager.model.MemberAttendance;
-import com.gym.gymmanager.model.Plan;
+import com.gym.gymmanager.model.*;
+import com.gym.gymmanager.request.LoginReq;
 import com.gym.gymmanager.request.MemberDetails;
 import com.gym.gymmanager.response.APiResp;
+import com.gym.gymmanager.response.GymDetailsResp;
 import com.gym.gymmanager.service.GymService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,11 @@ public class GymController {
     @Autowired
     GymService service;
 
+    @PostMapping("login")
+    public ResponseEntity<APiResp> login(@RequestBody LoginReq req) {
+        return new ResponseEntity<>(service.login(req), HttpStatus.OK);
+    }
+
     @PostMapping("addMember")
     public ResponseEntity<APiResp> addMember(@RequestBody MemberDetails memberDetails) {
         return new ResponseEntity<>(service.addMember(memberDetails), HttpStatus.OK);
@@ -30,25 +34,80 @@ public class GymController {
         return new ResponseEntity<>(service.addPlan(planDetails), HttpStatus.OK);
     }
 
+    ;
+
     @PostMapping("addBatch")
     public ResponseEntity<APiResp> addBatch(@RequestBody Batch batchDetails) {
         return new ResponseEntity<>(service.addBatch(batchDetails), HttpStatus.OK);
     }
-    @GetMapping("getAttendance")
-    public ResponseEntity<List<MemberAttendance>> getAttendance() {
-        return new ResponseEntity<>(service.getAttendanceList(), HttpStatus.OK);
+
+    @PostMapping("addExpense")
+    public ResponseEntity<APiResp> addExpense(@RequestBody GymExpense expenseDetails) {
+        return new ResponseEntity<>(service.addExpense(expenseDetails), HttpStatus.OK);
     }
-    @GetMapping("getMembers")
-    public ResponseEntity<List<Member>> getMembers() {
-        return new ResponseEntity<>(service.getMembers(), HttpStatus.OK);
+
+    @PostMapping("addEnquiryMember")
+    public ResponseEntity<APiResp> addEnquiryMember(@RequestBody EnquiryMember enquiryMemberDetails) {
+        return new ResponseEntity<>(service.addEnquiryMember(enquiryMemberDetails), HttpStatus.OK);
     }
-    @GetMapping("getBatch")
-    public ResponseEntity<List<Batch>> getBatch() {
-        return new ResponseEntity<>(service.getBatch(), HttpStatus.OK);
+
+    @PostMapping("addGymOwner")
+    public ResponseEntity<APiResp> addGymOwner(@RequestBody GymOwner gymOwnerDetails) {
+        return new ResponseEntity<>(service.addGymOwner(gymOwnerDetails), HttpStatus.OK);
     }
-    @GetMapping("getPlan")
-    public ResponseEntity<List<Plan>> getPlan() {
-        return new ResponseEntity<>(service.getPlan(), HttpStatus.OK);
+
+    @PostMapping("updatePlan")
+    public ResponseEntity<APiResp> updatePlan(@RequestBody Plan planDetails) {
+        return new ResponseEntity<>(service.updatePlan(planDetails), HttpStatus.OK);
+    }
+
+    @PostMapping("updateExpense")
+    public ResponseEntity<APiResp> updateExpense(@RequestBody GymExpense expenseDetails) {
+        return new ResponseEntity<>(service.updateExpense(expenseDetails), HttpStatus.OK);
+    }
+
+    @PostMapping("updateGymOwner")
+    public ResponseEntity<APiResp> updateExpense(@RequestBody GymOwner gymOwnerDetails) {
+        return new ResponseEntity<>(service.updateGymOwner(gymOwnerDetails), HttpStatus.OK);
+    }
+
+    @PostMapping("updateEnquiryMember")
+    public ResponseEntity<APiResp> updateExpense(@RequestBody EnquiryMember enquiryMemberDetails) {
+        return new ResponseEntity<>(service.updateEnquiryMember(enquiryMemberDetails), HttpStatus.OK);
+    }
+
+    @PostMapping("updateBatch")
+    public ResponseEntity<APiResp> updateBatch(@RequestBody Batch batchDetails) {
+        return new ResponseEntity<>(service.updateBatch(batchDetails), HttpStatus.OK);
+    }
+
+    @GetMapping("getAttendance/{ownerId}")
+    public ResponseEntity<List<MemberAttendance>> getAttendance(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getAttendanceList(ownerId), HttpStatus.OK);
+    }
+
+    @GetMapping("getMembers/{ownerId}")
+    public ResponseEntity<List<Member>> getMembers(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getMembers(ownerId), HttpStatus.OK);
+    }
+
+    @GetMapping("getBatch/{ownerId}")
+    public ResponseEntity<List<Batch>> getBatch(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getBatch(ownerId), HttpStatus.OK);
+    }
+
+    @GetMapping("getPlan/{ownerId}")
+    public ResponseEntity<List<Plan>> getPlan(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getPlan(ownerId), HttpStatus.OK);
+    }
+
+    @GetMapping("getGymDetails/{ownerId}")
+    public ResponseEntity<GymDetailsResp> getGymDetails(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getGymDetails(ownerId), HttpStatus.OK);
+    }
+    @GetMapping("getGymOwner/{ownerId}")
+    public ResponseEntity<GymOwner> getGymOwner(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getGymOwner(ownerId), HttpStatus.OK);
     }
 
 

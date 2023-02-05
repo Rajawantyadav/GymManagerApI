@@ -1,15 +1,15 @@
 package com.gym.gymmanager.service;
 
-import com.gym.gymmanager.model.Batch;
-import com.gym.gymmanager.model.Member;
-import com.gym.gymmanager.model.MemberAttendance;
-import com.gym.gymmanager.model.Plan;
+import com.gym.gymmanager.model.*;
 import com.gym.gymmanager.repository.GymRepository;
+import com.gym.gymmanager.request.LoginReq;
 import com.gym.gymmanager.request.MemberDetails;
 import com.gym.gymmanager.response.APiResp;
+import com.gym.gymmanager.response.GymDetailsResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +55,10 @@ public class GymService {
         return resp;
     }
 
-    public List<MemberAttendance> getAttendanceList() {
+    public List<MemberAttendance> getAttendanceList(String ownerId) {
 
         List<MemberAttendance> attendances;
-        attendances = repository.getAttendance();
+        attendances = repository.getAttendance(ownerId);
         if (!CollectionUtils.isEmpty(attendances)) {
             return attendances;
 
@@ -69,10 +69,10 @@ public class GymService {
 
     }
 
-    public List<Member> getMembers() {
+    public List<Member> getMembers(String ownerId) {
 
         List<Member> members;
-        members = repository.getMembers();
+        members = repository.getMembers(ownerId);
         if (!CollectionUtils.isEmpty(members)) {
             return members;
 
@@ -82,9 +82,9 @@ public class GymService {
 
     }
 
-    public List<Batch> getBatch() {
+    public List<Batch> getBatch(String ownerId) {
         List<Batch> batches;
-        batches = repository.getBatch();
+        batches = repository.getBatch(ownerId);
         if (!CollectionUtils.isEmpty(batches)) {
             return batches;
 
@@ -94,14 +94,127 @@ public class GymService {
 
     }
 
-    public List<Plan> getPlan() {
+    public List<Plan> getPlan(String ownerId) {
         List<Plan> plans;
-        plans = repository.getPlan();
+        plans = repository.getPlan(ownerId);
         if (!CollectionUtils.isEmpty(plans)) {
             return plans;
 
         } else {
             return new ArrayList<Plan>();
         }
+    }
+
+    public GymDetailsResp getGymDetails(String ownerId) {
+
+        return null;
+    }
+
+    public APiResp updatePlan(Plan planDetails) {
+        APiResp resp = new APiResp();
+        if (planDetails != null) {
+            resp = repository.updatePlan(planDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+
+    }
+
+    public APiResp updateBatch(Batch batchDetails) {
+        APiResp resp = new APiResp();
+        if (batchDetails != null) {
+            resp = repository.updateBatch(batchDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp login(LoginReq req) {
+        APiResp resp = new APiResp();
+        if (req != null) {
+            resp = repository.checkLogin(req);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp addExpense(GymExpense expenseDetails) {
+        APiResp resp = new APiResp();
+        if (expenseDetails != null) {
+            resp = repository.addExpense(expenseDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp addEnquiryMember(EnquiryMember enquiryMemberDetails) {
+        APiResp resp = new APiResp();
+        if (enquiryMemberDetails != null) {
+            resp = repository.addEnquiryMember(enquiryMemberDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp updateExpense(GymExpense expenseDetails) {
+        APiResp resp = new APiResp();
+        if (expenseDetails != null) {
+            resp = repository.updateExpense(expenseDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp updateGymOwner(GymOwner gymOwnerDetails) {
+        APiResp resp = new APiResp();
+        if (gymOwnerDetails != null) {
+            resp = repository.updateGymOwner(gymOwnerDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp updateEnquiryMember(EnquiryMember enquiryMemberDetails) {
+        APiResp resp = new APiResp();
+        if (enquiryMemberDetails != null) {
+            resp = repository.updateEnquiryMember(enquiryMemberDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public APiResp addGymOwner(GymOwner gymOwnerDetails) {
+        APiResp resp = new APiResp();
+        if (gymOwnerDetails != null) {
+            resp = repository.addGymOwner(gymOwnerDetails);
+        } else {
+            resp.setError("true");
+            resp.setMsg("Some Parameters missing ??.");
+        }
+        return resp;
+    }
+
+    public GymOwner getGymOwner(String ownerId) {
+        GymOwner gymOwner=null;
+        if(StringUtils.hasText(ownerId)){
+            gymOwner=repository.getGymOwner(ownerId);
+        }
+        return new GymOwner();
     }
 }

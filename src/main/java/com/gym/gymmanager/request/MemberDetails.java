@@ -18,6 +18,7 @@ public class MemberDetails {
     String memberBatch;
     String memberPlan;
     String memberWeight;
+    String ownerId;
 
 
 }

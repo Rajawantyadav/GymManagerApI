@@ -10,11 +10,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Plan {
+
+    String planId;
     String planName;
     String planPrice;
     String planDuration;
     String planDescription;
     String planAcive;
+    String ownerId;
 
 
 }

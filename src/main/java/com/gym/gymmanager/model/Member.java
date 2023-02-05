@@ -16,5 +16,7 @@ public class Member {
     String activePlanName;
     String planExpireDate;
 
+    String ownerId;
+
 
 }

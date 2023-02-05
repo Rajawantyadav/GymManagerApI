@@ -16,4 +16,6 @@ public class MemberAttendance {
     String punchInTime;
     String punchOutTime;
 
+    String ownerId;
+
    }
