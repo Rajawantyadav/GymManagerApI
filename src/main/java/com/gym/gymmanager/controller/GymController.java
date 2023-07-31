@@ -122,7 +122,7 @@ public class GymController {
         return new ResponseEntity<>(service.getGymExpense(ownerId), HttpStatus.OK);
     }
     @GetMapping("getMsg")
-    public ResponseEntity<String> getMsg(@PathVariable String ownerId) {
+    public ResponseEntity<String> getMsg() {
         return new ResponseEntity<>("Hello", HttpStatus.OK);
     }
 
