@@ -8,4 +8,5 @@ import lombok.Setter;
 public class APiResp {
     String error;
     String msg;
+    String ownerId;
 }

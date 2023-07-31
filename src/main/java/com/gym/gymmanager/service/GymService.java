@@ -211,10 +211,31 @@ public class GymService {
     }
 
     public GymOwner getGymOwner(String ownerId) {
-        GymOwner gymOwner=null;
-        if(StringUtils.hasText(ownerId)){
-            gymOwner=repository.getGymOwner(ownerId);
+
+        if (StringUtils.hasText(ownerId)) {
+            return repository.getGymOwner(ownerId);
         }
         return new GymOwner();
+    }
+
+    public List<EnquiryMember> getEnquiryMembers(String ownerId) {
+        List<EnquiryMember> enquiryMembers;
+        enquiryMembers = repository.getEnquiryMembers(ownerId);
+        if (!CollectionUtils.isEmpty(enquiryMembers)) {
+            return enquiryMembers;
+        } else {
+            return new ArrayList<EnquiryMember>();
+        }
+    }
+
+    public List<GymExpense> getGymExpense(String ownerId) {
+        List<GymExpense> gymExpenses;
+        gymExpenses = repository.getGymExpense(ownerId);
+        if (!CollectionUtils.isEmpty(gymExpenses)) {
+            return gymExpenses;
+        } else {
+            return new ArrayList<GymExpense>();
+        }
+
     }
 }

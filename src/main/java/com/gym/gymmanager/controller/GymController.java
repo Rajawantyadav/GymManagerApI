@@ -17,8 +17,10 @@ import java.util.List;
 @RequestMapping("/api")
 public class GymController {
     @Autowired
-    GymService service;
+    private GymService service;
+//get number of request details endpoint
 
+    //    http://localhost:8080/actuator/metrics/http.server.requests
     @PostMapping("login")
     public ResponseEntity<APiResp> login(@RequestBody LoginReq req) {
         return new ResponseEntity<>(service.login(req), HttpStatus.OK);
@@ -34,7 +36,6 @@ public class GymController {
         return new ResponseEntity<>(service.addPlan(planDetails), HttpStatus.OK);
     }
 
-    ;
 
     @PostMapping("addBatch")
     public ResponseEntity<APiResp> addBatch(@RequestBody Batch batchDetails) {
@@ -91,6 +92,11 @@ public class GymController {
         return new ResponseEntity<>(service.getMembers(ownerId), HttpStatus.OK);
     }
 
+    @GetMapping("getEnquiryMembers/{ownerId}")
+    public ResponseEntity<List<EnquiryMember>> getEnquiryMembers(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getEnquiryMembers(ownerId), HttpStatus.OK);
+    }
+
     @GetMapping("getBatch/{ownerId}")
     public ResponseEntity<List<Batch>> getBatch(@PathVariable String ownerId) {
         return new ResponseEntity<>(service.getBatch(ownerId), HttpStatus.OK);
@@ -105,9 +111,15 @@ public class GymController {
     public ResponseEntity<GymDetailsResp> getGymDetails(@PathVariable String ownerId) {
         return new ResponseEntity<>(service.getGymDetails(ownerId), HttpStatus.OK);
     }
+
     @GetMapping("getGymOwner/{ownerId}")
     public ResponseEntity<GymOwner> getGymOwner(@PathVariable String ownerId) {
         return new ResponseEntity<>(service.getGymOwner(ownerId), HttpStatus.OK);
+    }
+
+    @GetMapping("getGymExpense/{ownerId}")
+    public ResponseEntity<List<GymExpense>> getGymExpense(@PathVariable String ownerId) {
+        return new ResponseEntity<>(service.getGymExpense(ownerId), HttpStatus.OK);
     }
 
 

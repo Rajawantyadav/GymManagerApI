@@ -26,7 +26,7 @@ public class GymRepository {
         APiResp resp = new APiResp();
         String planId = getPlanIdByName(memberDetails.getMemberPlan());
         String batchId = getBatchIdByName(memberDetails.getMemberBatch());
-        String sql = "INSERT INTO practice.gym_member\n" + "(member_name, email, mobile, dob, gender, weight, plan_id, batch_id,member_joining_date,plan_taken_date,member_active)\n" + "VALUES('" + memberDetails.getMemberName() + "', '" + memberDetails.getMemberEmail() + "', '" + memberDetails.getMemberMobile() + "'," + " '" + memberDetails.getMemberDob() + "', '" + memberDetails.getMemberGender() + "', '" + memberDetails.getMemberWeight() + "'" + ",'" + planId + "', '" + batchId + "'" + ",'" + LocalDate.now() + "','" + LocalDate.now() + "','1')";
+        String sql = "INSERT INTO practice.gym_member\n" + "(member_name, email, mobile, dob, gender, weight, plan_id, batch_id,member_joining_date,plan_taken_date,member_active,owner_id)\n" + "VALUES('" + memberDetails.getMemberName() + "', '" + memberDetails.getMemberEmail() + "', '" + memberDetails.getMemberMobile() + "'," + " '" + memberDetails.getMemberDob() + "', '" + memberDetails.getMemberGender() + "', '" + memberDetails.getMemberWeight() + "'" + ",'" + planId + "', '" + batchId + "'" + ",'" + LocalDate.now() + "','" + LocalDate.now() + "','1','" + memberDetails.getOwnerId() + "')";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
 
@@ -70,7 +70,7 @@ public class GymRepository {
 
     public APiResp addPlan(Plan planDetails) {
         APiResp resp = new APiResp();
-        String sql = "INSERT INTO practice.gym_plan\n" + "(plan_name, plan_fees, plan_duration, plan_desc, plan_active)\n" + "VALUES('" + planDetails.getPlanName() + "', '" + planDetails.getPlanPrice() + "', '" + planDetails.getPlanDuration() + "'" + ", '" + planDetails.getPlanDescription() + "', '" + planDetails.getPlanAcive() + "')";
+        String sql = "INSERT INTO practice.gym_plan\n" + "(plan_name, plan_fees, plan_duration, plan_desc, plan_active,owner_id)\n" + "VALUES('" + planDetails.getPlanName() + "', '" + planDetails.getPlanPrice() + "', '" + planDetails.getPlanDuration() + "'" + ", '" + planDetails.getPlanDescription() + "', '" + planDetails.getPlanAcive() + "','" + planDetails.getOwnerId() + "')";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
 
@@ -86,7 +86,7 @@ public class GymRepository {
 
     public APiResp addBatch(Batch batchDetails) {
         APiResp resp = new APiResp();
-        String sql = "INSERT INTO practice.gym_batch\n" + "(batch_name, batch_limit, batch_start_time, batch_end_time, batch_active)\n" + "VALUES('" + batchDetails.getBatchName() + "', '" + batchDetails.getLimit() + "', '" + batchDetails.getBatchStartTime() + "', " + "'" + batchDetails.getBatchEndTime() + "', '" + batchDetails.getBatchActive() + "')\n";
+        String sql = "INSERT INTO practice.gym_batch\n" + "(batch_name, batch_limit, batch_start_time, batch_end_time, batch_active,owner_id)\n" + "VALUES('" + batchDetails.getBatchName() + "', '" + batchDetails.getLimit() + "', '" + batchDetails.getBatchStartTime() + "', " + "'" + batchDetails.getBatchEndTime() + "', '" + batchDetails.getBatchActive() + "','" + batchDetails.getOwnerId() + "')\n";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
 
@@ -102,7 +102,7 @@ public class GymRepository {
 
     public List<MemberAttendance> getAttendance(String ownerId) {
         List<MemberAttendance> attendanceList = new ArrayList<>();
-        String sql = "select member_name,punch_date,punch_in_datetime,punch_out_datetime from gym_member_attendance";
+        String sql = "select member_name,punch_date,punch_in_datetime,punch_out_datetime from gym_member_attendance where owner_id ='" + ownerId + "'";
         try {
             List<Tuple> datalist = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
             if (!CollectionUtils.isEmpty(datalist)) {
@@ -124,7 +124,7 @@ public class GymRepository {
 
     public List<Member> getMembers(String ownerId) {
         List<Member> memberList = new ArrayList<>();
-        String sql = "SELECT member_id, member_name, email, mobile, dob, gender, weight, plan_id, batch_id, member_active,member_joining_date,member_exit_date,plan_taken_date\n" + "FROM practice.gym_member where member_active='1'";
+        String sql = "SELECT member_id, member_name, email, mobile, dob, gender, weight, plan_id, batch_id, member_active,member_joining_date,member_exit_date,plan_taken_date\n" + "FROM practice.gym_member where owner_id ='" + ownerId + "' and member_active='1'";
         try {
             List<Tuple> datalist = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
             if (!CollectionUtils.isEmpty(datalist)) {
@@ -187,7 +187,7 @@ public class GymRepository {
 
     public List<Batch> getBatch(String ownerId) {
         List<Batch> batchList = new ArrayList<>();
-        String sql = "SELECT batch_id, batch_name, batch_limit, batch_start_time, batch_end_time, batch_active\n" + "FROM practice.gym_batch";
+        String sql = "SELECT batch_id, batch_name, batch_limit, batch_start_time, batch_end_time, batch_active\n" + "FROM practice.gym_batch where owner_id ='" + ownerId + "'";
         try {
             List<Tuple> datalist = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
             if (!CollectionUtils.isEmpty(datalist)) {
@@ -210,7 +210,7 @@ public class GymRepository {
 
     public List<Plan> getPlan(String ownerId) {
         List<Plan> planList = new ArrayList<>();
-        String sql = "SELECT plan_id, plan_name, plan_fees, plan_duration, plan_desc, plan_active\n" + "FROM practice.gym_plan";
+        String sql = "SELECT plan_id, plan_name, plan_fees,owner_id, plan_duration, plan_desc, plan_active\n" + "FROM practice.gym_plan where owner_id ='" + ownerId + "'";
         try {
             List<Tuple> datalist = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
             if (!CollectionUtils.isEmpty(datalist)) {
@@ -221,6 +221,8 @@ public class GymRepository {
                     plan.setPlanPrice(String.valueOf(tuple.get("plan_fees")));
                     plan.setPlanDuration(String.valueOf(tuple.get("plan_duration")));
                     plan.setPlanDescription(String.valueOf(tuple.get("plan_desc")));
+                    plan.setOwnerId(String.valueOf(tuple.get("owner_id")));
+                    plan.setPlanAcive(String.valueOf(tuple.get("plan_active")));
                     planList.add(plan);
                 }
             }
@@ -269,6 +271,7 @@ public class GymRepository {
         try {
             List<Tuple> tupleList = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
             if (!CollectionUtils.isEmpty(tupleList)) {
+                resp.setOwnerId(String.valueOf(tupleList.get(0).get("owner_id")));
                 resp.setError("false");
                 resp.setMsg("Login Success..");
             } else {
@@ -287,8 +290,8 @@ public class GymRepository {
     public APiResp addExpense(GymExpense expenseDetails) {
         APiResp resp = new APiResp();
         String sql = "INSERT INTO practice.gym_expense\n" +
-                "(expense_title, expense_amount, expense_date)\n" +
-                "VALUES('" + expenseDetails.getExpense_title() + "', '" + expenseDetails.getExpense_amount() + "', '" + expenseDetails.getExpense_date() + "')";
+                "(expense_title, expense_amount, expense_date,owner_id)\n" +
+                "VALUES('" + expenseDetails.getExpense_title() + "', '" + expenseDetails.getExpense_amount() + "', '" + expenseDetails.getExpense_date() + "','" + expenseDetails.getOwnerId() + "')";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
 
@@ -305,9 +308,9 @@ public class GymRepository {
     public APiResp addEnquiryMember(EnquiryMember enquiryMemberDetails) {
         APiResp resp = new APiResp();
         String sql = "INSERT INTO practice.gym_enqiury_member\n" +
-                "(member_name, member_email, member_gender, enquiry_date, enquiry_desc)\n" +
+                "(member_name, member_email, member_gender, enquiry_date, enquiry_desc,owner_id,member_mobile)\n" +
                 "VALUES('" + enquiryMemberDetails.getMember_name() + "', '" + enquiryMemberDetails.getMember_email() + "'," +
-                " '" + enquiryMemberDetails.getMember_gender() + "', '" + enquiryMemberDetails.getEnquiry_date() + "', '" + enquiryMemberDetails.getEnquiry_desc() + "')";
+                " '" + enquiryMemberDetails.getMember_gender() + "', '" + enquiryMemberDetails.getEnquiry_date() + "', '" + enquiryMemberDetails.getEnquiry_desc() + "','" + enquiryMemberDetails.getOwnerId() + "','"+enquiryMemberDetails.getMember_mobile()+"')";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
 
@@ -342,8 +345,7 @@ public class GymRepository {
     public APiResp updateGymOwner(GymOwner gymOwnerDetails) {
         APiResp resp = new APiResp();
         String sql = "UPDATE practice.gym_owner_member\n" +
-                "SET owner_name='" + gymOwnerDetails.getOwner_name() + "', owner_email='" + gymOwnerDetails.getOwner_email() + "', owner_password='" + gymOwnerDetails.getOwner_password() + "'," +
-                " owner_active='" + gymOwnerDetails.getOwner_active() + "'" +
+                "SET owner_name='" + gymOwnerDetails.getOwner_name() + "', owner_email='" + gymOwnerDetails.getOwner_email() + "', owner_mobile='" + gymOwnerDetails.getOwner_mobile() + "'" +
                 "WHERE owner_id=" + gymOwnerDetails.getOwner_id() + "";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
@@ -377,8 +379,8 @@ public class GymRepository {
     public APiResp addGymOwner(GymOwner gymOwnerDetails) {
         APiResp resp = new APiResp();
         String sql = "INSERT INTO practice.gym_owner_member\n" +
-                "(owner_name, owner_email, owner_password, owner_active, is_password_reset)\n" +
-                "VALUES('" + gymOwnerDetails.getOwner_name() + "', '" + gymOwnerDetails.getOwner_email() + "', '" + gymOwnerDetails.getOwner_password() + "', '1', '0');";
+                "(owner_name, owner_email, owner_password, owner_active, is_password_reset,owner_mobile)\n" +
+                "VALUES('" + gymOwnerDetails.getOwner_name() + "', '" + gymOwnerDetails.getOwner_email() + "', '" + gymOwnerDetails.getOwner_password() + "', '1', '0','" + gymOwnerDetails.getOwner_mobile() + "');";
         try {
             entityManager.createNativeQuery(sql).executeUpdate();
         } catch (Exception e) {
@@ -393,17 +395,18 @@ public class GymRepository {
 
     public GymOwner getGymOwner(String ownerId) {
         GymOwner gymOwner = new GymOwner();
-        String sql = "";
+        String sql = "SELECT owner_id, owner_mobile,owner_name, owner_email, owner_password, owner_active, is_password_reset, reset_password\n" +
+                "FROM practice.gym_owner_member where owner_id='" + ownerId + "'";
         try {
             List<Tuple> list = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
             if (!CollectionUtils.isEmpty(list)) {
                 Tuple gymOwnerDetails = list.get(0);
-                gymOwner.setOwner_id(String.valueOf(gymOwnerDetails.get("")));
-                gymOwner.setOwner_email(String.valueOf(gymOwnerDetails.get("")));
-                gymOwner.setOwner_active(String.valueOf(gymOwnerDetails.get("")));
-                gymOwner.setOwner_name(String.valueOf(gymOwnerDetails.get("")));
-                gymOwner.setOwner_mobile(String.valueOf(gymOwnerDetails.get("")));
-                gymOwner.setOwner_password(String.valueOf(gymOwnerDetails.get("")));
+                gymOwner.setOwner_id(String.valueOf(gymOwnerDetails.get("owner_id")));
+                gymOwner.setOwner_email(String.valueOf(gymOwnerDetails.get("owner_email")));
+                gymOwner.setOwner_active(String.valueOf(gymOwnerDetails.get("owner_active")));
+                gymOwner.setOwner_name(String.valueOf(gymOwnerDetails.get("owner_name")));
+                gymOwner.setOwner_mobile(String.valueOf(gymOwnerDetails.get("owner_mobile")));
+                gymOwner.setOwner_password(String.valueOf(gymOwnerDetails.get("owner_password")));
             }
         } catch (Exception e) {
             e.getStackTrace();
@@ -411,5 +414,49 @@ public class GymRepository {
 
         return gymOwner;
 
+    }
+
+    public List<EnquiryMember> getEnquiryMembers(String ownerId) {
+        List<EnquiryMember> EnquiryMemberList = new ArrayList<>();
+        String sql = "SELECT member_id, member_name, member_email, member_gender, enquiry_date, enquiry_desc, owner_id,member_mobile\n" +
+                "FROM practice.gym_enqiury_member where owner_id='" + ownerId + "'";
+        try {
+            List<Tuple> datalist = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
+            if (!CollectionUtils.isEmpty(datalist)) {
+                for (Tuple tuple : datalist) {
+                    EnquiryMember enquiryMember = new EnquiryMember();
+                    enquiryMember.setEnquiry_date(String.valueOf(tuple.get("enquiry_date")));
+                    enquiryMember.setMember_mobile(String.valueOf(tuple.get("member_mobile")));
+                    enquiryMember.setMember_email(String.valueOf(tuple.get("member_email")));
+                    enquiryMember.setMember_gender(String.valueOf(tuple.get("member_gender")));
+                    enquiryMember.setMember_name(String.valueOf(tuple.get("member_name")));
+                    enquiryMember.setMember_id(String.valueOf(tuple.get("member_id")));
+                    enquiryMember.setEnquiry_desc(String.valueOf(tuple.get("enquiry_desc")));
+                    enquiryMember.setOwnerId(String.valueOf(tuple.get("owner_id")));
+                    EnquiryMemberList.add(enquiryMember);
+                }
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
+        return EnquiryMemberList;
+    }
+
+    public List<GymExpense> getGymExpense(String ownerId) {
+        List<GymExpense> expenseList = new ArrayList<>();
+        String sql = "";
+        try {
+            List<Tuple> datalist = entityManager.createNativeQuery(sql, Tuple.class).getResultList();
+            if (!CollectionUtils.isEmpty(datalist)) {
+                for (Tuple tuple : datalist) {
+                    GymExpense enquiryMember = new GymExpense();
+
+                    expenseList.add(enquiryMember);
+                }
+            }
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
+        return expenseList;
     }
 }
